@@ -86,7 +86,7 @@ async function registerUser() {
       </div>
 
       <!-- USER_IDENTIFIED State -->
-      <div v-if="currentState === 'USER_IDENTIFIED'" class="flex flex-col items-center">
+      <div v-if="currentState === 'USER_IDENTIFIED'" :key="newUserIdentify?.id" class="flex flex-col items-center animate-fade-in-scale">
         <div class="flex items-center justify-center w-32 h-32 mb-6 bg-gray-700 border-4 border-green-500 rounded-full">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 text-green-400" fill="none" viewBox="0 0 24 24"
             stroke="currentColor" stroke-width="2">
@@ -209,7 +209,22 @@ async function registerUser() {
   }
 }
 
+@keyframes fade-in-scale {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 .animate-bounce-in {
   animation: bounce-in 0.5s;
+}
+
+.animate-fade-in-scale {
+  animation: fade-in-scale 0.3s ease-out;
 }
 </style>
