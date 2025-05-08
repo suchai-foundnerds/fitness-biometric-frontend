@@ -13,6 +13,7 @@ const newRegisterUser = ref({
 const isRegistering = ref(false)
 const showSuccessPopup = ref(false)
 const currentState = ref<AppState>("IDLE")
+const timeoutRef = ref<NodeJS.Timeout | null>(null)
 
 watch(newRegister, (newUser, prevUser) => {
   if (newUser?.id === prevUser?.id) return
@@ -30,9 +31,17 @@ watch(newRegister, (newUser, prevUser) => {
   }
 }, { immediate: true })
 
-watch(newUserIdentify, (newUserIdentify, prevUserIdentify) => {
+watch(newUserIdentify, async (newUserIdentify, prevUserIdentify) => {
   if (newUserIdentify) {
     currentState.value = "USER_IDENTIFIED"
+
+    if (timeoutRef.value) {
+      clearTimeout(timeoutRef.value)
+    }
+
+    timeoutRef.value = setTimeout(() => {
+      currentState.value = "IDLE"
+    }, 4000)
   }
 }, { immediate: true })
 

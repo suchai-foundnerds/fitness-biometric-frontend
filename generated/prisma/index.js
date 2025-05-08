@@ -135,7 +135,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/Users/suchaifooanant/Works/suchaif/fitness-biometric/generated/prisma",
+      "value": "C:\\Users\\66968\\Documents\\fitness-biometric-frontend\\generated\\prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -144,12 +144,16 @@ const config = {
     "binaryTargets": [
       {
         "fromEnvVar": null,
-        "value": "darwin-arm64",
+        "value": "windows"
+      },
+      {
+        "fromEnvVar": null,
+        "value": "windows",
         "native": true
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/Users/suchaifooanant/Works/suchaif/fitness-biometric/prisma/schema.prisma",
+    "sourceFilePath": "C:\\Users\\66968\\Documents\\fitness-biometric-frontend\\prisma\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
@@ -172,8 +176,8 @@ const config = {
       }
     }
   },
-  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel User {\n  id              Int              @id @default(autoincrement())\n  name            String\n  fingerprint     String\n  active          Boolean          @default(true)\n  createdAt       DateTime         @default(now())\n  updatedAt       DateTime         @updatedAt\n  userAttendances UserAttendance[]\n}\n\nmodel UserAttendance {\n  id        Int      @id @default(autoincrement())\n  userId    Int\n  user      User     @relation(fields: [userId], references: [id])\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n}\n",
-  "inlineSchemaHash": "5348c2e94a503e6bd8a4c0b01f716d79e3aa5431f3e549e22f4e73b9c007a4fe",
+  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\ngenerator client {\n  provider      = \"prisma-client-js\"\n  output        = \"../generated/prisma\"\n  binaryTargets = [\"windows\", \"native\"]\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel User {\n  id              Int              @id @default(autoincrement())\n  name            String\n  fingerprint     String\n  active          Boolean          @default(true)\n  createdAt       DateTime         @default(now())\n  updatedAt       DateTime         @updatedAt\n  userAttendances UserAttendance[]\n}\n\nmodel UserAttendance {\n  id        Int      @id @default(autoincrement())\n  userId    Int\n  user      User     @relation(fields: [userId], references: [id])\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n}\n",
+  "inlineSchemaHash": "4889edc9430917188bb009d0a40343b34b1b933e5db2865a4508b54f2b37e3c9",
   "copyEngine": true
 }
 
@@ -212,8 +216,8 @@ exports.PrismaClient = PrismaClient
 Object.assign(exports, Prisma)
 
 // file annotations for bundling tools to include these files
-path.join(__dirname, "libquery_engine-darwin-arm64.dylib.node");
-path.join(process.cwd(), "generated/prisma/libquery_engine-darwin-arm64.dylib.node")
+path.join(__dirname, "query_engine-windows.dll.node");
+path.join(process.cwd(), "generated/prisma/query_engine-windows.dll.node")
 // file annotations for bundling tools to include these files
 path.join(__dirname, "schema.prisma");
 path.join(process.cwd(), "generated/prisma/schema.prisma")
