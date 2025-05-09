@@ -4,6 +4,8 @@ const IDENTIFY_EVENT_CAPTURE_TIME = 10000
 
 export function useNewFingerprintIdentify() {
   const { data: identifyEvent, refresh: refreshIdentifyEvent } = useFetch('/api/fingerprint-identify')
+
+  const newUserValid = ref<boolean>()
   const newUserIdentify = ref<{
     id: number,
     name: string,
@@ -12,6 +14,8 @@ export function useNewFingerprintIdentify() {
   } | null>(null)
 
   watch(identifyEvent, async (newIdentifyEvent, prevIdentifyEvent) => {
+    if (!newIdentifyEvent) return
+
     const currentTime = Date.now()
     const identifyEventTime = newIdentifyEvent?.identifyTimestamp
 
@@ -19,7 +23,20 @@ export function useNewFingerprintIdentify() {
 
     if (currentTime - identifyEventTime > IDENTIFY_EVENT_CAPTURE_TIME) return
 
-    if (newIdentifyEvent.id !== prevIdentifyEvent?.id || newIdentifyEvent.identifyTimestamp !== prevIdentifyEvent?.identifyTimestamp) {
+    if (newIdentifyEvent?.status === 'invalid') {
+      newUserValid.value = false
+      newUserIdentify.value = null
+      return
+    }
+
+    if (
+      prevIdentifyEvent?.status === 'invalid' ||
+      (
+        newIdentifyEvent.id !== prevIdentifyEvent?.id ||
+        newIdentifyEvent.identifyTimestamp !== prevIdentifyEvent?.identifyTimestamp
+      )
+    ) {
+      newUserValid.value = true
       await recordUserAttendance(newIdentifyEvent.id)
 
       newUserIdentify.value = {
@@ -46,5 +63,5 @@ export function useNewFingerprintIdentify() {
     }
   }
 
-  return newUserIdentify
+  return { newUserIdentify, newUserValid }
 }

@@ -2,7 +2,7 @@
 type AppState = "IDLE" | "USER_IDENTIFIED" | "USER_INVALID" | "NEW_USER";
 
 const newRegister = useNewRegister()
-const newUserIdentify = useNewFingerprintIdentify()
+const { newUserIdentify, newUserValid } = useNewFingerprintIdentify()
 
 const newRegisterUser = ref({
   id: 0,
@@ -31,18 +31,21 @@ watch(newRegister, (newUser, prevUser) => {
   }
 }, { immediate: true })
 
-watch(newUserIdentify, async (newUserIdentify, prevUserIdentify) => {
-  if (newUserIdentify) {
+watch([newUserIdentify, newUserValid], async ([newUserIdentify, newUserValid]) => {
+  if (newUserIdentify && newUserValid) {
     currentState.value = "USER_IDENTIFIED"
 
-    if (timeoutRef.value) {
-      clearTimeout(timeoutRef.value)
-    }
-
-    timeoutRef.value = setTimeout(() => {
+  } else if (newUserValid === false) {
+    currentState.value = "USER_INVALID"
+  }
+  
+  if (timeoutRef.value) {
+    clearTimeout(timeoutRef.value)
+  }
+  
+  timeoutRef.value = setTimeout(() => {
       currentState.value = "IDLE"
     }, 4000)
-  }
 }, { immediate: true })
 
 async function registerUser() {
@@ -86,7 +89,8 @@ async function registerUser() {
       </div>
 
       <!-- USER_IDENTIFIED State -->
-      <div v-if="currentState === 'USER_IDENTIFIED'" :key="newUserIdentify?.id" class="flex flex-col items-center animate-fade-in-scale">
+      <div v-if="currentState === 'USER_IDENTIFIED'" :key="newUserIdentify?.id"
+        class="flex flex-col items-center animate-fade-in-scale">
         <div class="flex items-center justify-center w-32 h-32 mb-6 bg-gray-700 border-4 border-green-500 rounded-full">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 text-green-400" fill="none" viewBox="0 0 24 24"
             stroke="currentColor" stroke-width="2">
@@ -214,6 +218,7 @@ async function registerUser() {
     opacity: 0;
     transform: scale(0.95);
   }
+
   100% {
     opacity: 1;
     transform: scale(1);

@@ -1,11 +1,13 @@
 <template>
   <div>
-    <NuxtPage />
+    <NuxtLayout>
+      <NuxtPage />
+    </NuxtLayout>
   </div>
 </template>
 
 <style>
 * {
-  font-family: 'Kanit', sans-serif; 
+  font-family: 'Kanit', sans-serif;
 }
 </style>
