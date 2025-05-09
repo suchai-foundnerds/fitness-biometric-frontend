@@ -39,6 +39,7 @@ export default eventHandler(async (e): Promise<IdentifyResult> => {
     },
     where: {
       id: parseInt(id),
+      active: true,
     },
   })
 
