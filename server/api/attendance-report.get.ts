@@ -1,4 +1,4 @@
-import { PrismaClient } from "~/generated/prisma";
+import { prisma } from "~/server/utils/db";
 import { eventHandler, getQuery } from 'h3';
 
 export default eventHandler(async (event) => {
@@ -14,8 +14,6 @@ export default eventHandler(async (event) => {
   
   // Start of current month for new members count
   const startOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
-  
-  const prisma = new PrismaClient();
   
   // Get total members count
   const totalMembers = await prisma.user.count({

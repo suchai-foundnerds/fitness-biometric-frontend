@@ -1,6 +1,6 @@
 import { readFile } from 'fs/promises'
 import path from 'path'
-import { PrismaClient } from '~/generated/prisma'
+import { prisma } from '~/server/utils/db'
 
 type ValidIdentifyResult = {
   status: 'valid',
@@ -26,7 +26,6 @@ export default eventHandler(async (e): Promise<IdentifyResult> => {
     identifyTimestamp: parseInt(timestamp),
   }
 
-  const prisma = new PrismaClient()
   const user = await prisma.user.findFirst({
     select: {
       id: true,

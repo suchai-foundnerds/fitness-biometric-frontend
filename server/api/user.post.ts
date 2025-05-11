@@ -1,5 +1,5 @@
 import { defineEventHandler, readBody } from 'h3';
-import { PrismaClient } from '~/generated/prisma/client';
+import { prisma } from '~/server/utils/db';
 
 export default defineEventHandler(async (event) => {
   try {
@@ -15,7 +15,6 @@ export default defineEventHandler(async (event) => {
 
     const { name, fingerprint, id } = body;
 
-    const prisma = new PrismaClient();
     const newUser = await prisma.user.create({ data: { id, name, fingerprint } });
 
     return {

@@ -1,7 +1,6 @@
-import { PrismaClient } from '~/generated/prisma'
+import { prisma } from "../utils/db"
 
 export default eventHandler(async (e) => {
-  const prisma = new PrismaClient()
   const user = await prisma.user.findFirst({
     orderBy: {
       id: 'desc',

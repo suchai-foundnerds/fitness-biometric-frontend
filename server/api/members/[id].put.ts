@@ -1,4 +1,4 @@
-import { PrismaClient } from "~/generated/prisma";
+import { prisma } from "~/server/utils/db";
 import { eventHandler, readBody } from 'h3';
 
 export default eventHandler(async (event) => {
@@ -20,8 +20,6 @@ export default eventHandler(async (event) => {
       message: 'Active status must be a boolean'
     });
   }
-  
-  const prisma = new PrismaClient();
   
   try {
     // Check if member exists

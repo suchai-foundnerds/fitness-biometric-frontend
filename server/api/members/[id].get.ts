@@ -1,4 +1,4 @@
-import { PrismaClient } from "~/generated/prisma";
+import { prisma } from "~/server/utils/db";
 
 export default eventHandler(async (event) => {
   const id = Number(event.context.params?.id);
@@ -9,8 +9,6 @@ export default eventHandler(async (event) => {
       message: 'Invalid member ID'
     });
   }
-  
-  const prisma = new PrismaClient();
   
   try {
     const member = await prisma.user.findUnique({

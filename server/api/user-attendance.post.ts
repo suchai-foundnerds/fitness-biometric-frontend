@@ -1,4 +1,4 @@
-import { PrismaClient } from "~/generated/prisma";
+import { prisma } from "~/server/utils/db";
 
 export default eventHandler(async (e) => {
     const {userId} = await readBody(e);
@@ -10,7 +10,6 @@ export default eventHandler(async (e) => {
         })
     }
 
-    const prisma = new PrismaClient();
     await prisma.user.findFirstOrThrow({
         where: {
             id: userId,
