@@ -134,7 +134,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "C:\\Users\\66968\\Documents\\fitness-biometric-frontend\\generated\\prisma",
+      "value": "/Users/suchaifooanant/Works/suchaif/fitness-biometric/generated/prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -147,12 +147,12 @@ const config = {
       },
       {
         "fromEnvVar": null,
-        "value": "windows",
+        "value": "darwin-arm64",
         "native": true
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "C:\\Users\\66968\\Documents\\fitness-biometric-frontend\\prisma\\schema.prisma",
+    "sourceFilePath": "/Users/suchaifooanant/Works/suchaif/fitness-biometric/prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
@@ -166,12 +166,11 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
-  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
         "fromEnvVar": "DATABASE_URL",
-        "value": null
+        "value": "postgres://foundnerds-general:f0undnerdsf0undnerdsf0undnerds@119.59.103.72:5433/fingerprint"
       }
     }
   },
