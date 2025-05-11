@@ -1,4 +1,4 @@
-import { prisma } from "~/server/utils/db";
+import { db } from "~/server/utils/db";
 
 export default eventHandler(async (e) => {
     const {userId} = await readBody(e);
@@ -10,17 +10,15 @@ export default eventHandler(async (e) => {
         })
     }
 
-    await prisma.user.findFirstOrThrow({
-        where: {
-            id: userId,
-        }
-    })
+    const user = await db.findUserById(userId);
+    if (!user) {
+        throw createError({
+            statusCode: 404,
+            statusMessage: 'User not found',
+        })
+    }
     
-    await prisma.userAttendance.create({
-        data: {
-            userId,
-        }
-    })
+    await db.createAttendance(userId);
     
     return {
         success: true,

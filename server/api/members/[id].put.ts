@@ -1,4 +1,4 @@
-import { prisma } from "~/server/utils/db";
+import { db } from "~/server/utils/db";
 import { eventHandler, readBody } from 'h3';
 
 export default eventHandler(async (event) => {
@@ -23,9 +23,7 @@ export default eventHandler(async (event) => {
   
   try {
     // Check if member exists
-    const existingMember = await prisma.user.findUnique({
-      where: { id }
-    });
+    const existingMember = await db.findUserById(id);
     
     if (!existingMember) {
       throw createError({
@@ -35,15 +33,9 @@ export default eventHandler(async (event) => {
     }
     
     // Update the member's active status
-    const updatedMember = await prisma.user.update({
-      where: { id },
-      data: {
-        active: body.active,
-        updatedAt: new Date()
-      }
-    });
+    const updatedMember = await db.updateUserActiveStatus(id, body.active);
     
-    return updatedMember;
+    return updatedMember[0];
     
   } catch (error) {
     console.error('Error updating member:', error);

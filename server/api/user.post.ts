@@ -1,5 +1,5 @@
 import { defineEventHandler, readBody } from 'h3';
-import { prisma } from '~/server/utils/db';
+import { db } from '~/server/utils/db';
 
 export default defineEventHandler(async (event) => {
   try {
@@ -15,11 +15,11 @@ export default defineEventHandler(async (event) => {
 
     const { name, fingerprint, id } = body;
 
-    const newUser = await prisma.user.create({ data: { id, name, fingerprint } });
+    const newUser = await db.createUser({ id, name, fingerprint });
 
     return {
       message: 'User creation endpoint called successfully',
-      user: newUser,
+      user: newUser[0],
     };
   } catch (error: any) {
     if (error.statusCode) {

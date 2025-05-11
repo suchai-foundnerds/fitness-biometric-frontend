@@ -11,7 +11,7 @@ interface User {
   active: boolean;
   createdAt: string;
   updatedAt: string;
-  userAttendances: {
+  memberAttendances: {
     id: number;
     createdAt: string;
     updatedAt: string;
@@ -60,9 +60,9 @@ const toggleMemberStatus = async () => {
 
 // Compute attendance statistics
 const attendanceStats = computed(() => {
-  if (!member.value?.userAttendances) return null;
+  if (!member.value?.memberAttendances) return null;
   
-  const attendances = member.value.userAttendances;
+  const attendances = member.value.memberAttendances;
   
   // Get this month's attendance count
   const now = new Date();
@@ -104,7 +104,7 @@ const attendanceStats = computed(() => {
     </div>
     
     <!-- Error message -->
-    <div v-if="updateError" class="p-4 mb-4 text-red-400 bg-red-900 bg-opacity-20 rounded-lg">
+    <div v-if="updateError" class="p-4 mb-4 text-red-400 bg-red-900 rounded-lg bg-opacity-20">
       {{ updateError }}
       <button 
         @click="updateError = ''" 
@@ -120,7 +120,7 @@ const attendanceStats = computed(() => {
     </div>
     
     <!-- Error state -->
-    <div v-else-if="error" class="p-6 bg-red-900 bg-opacity-20 rounded-lg">
+    <div v-else-if="error" class="p-6 bg-red-900 rounded-lg bg-opacity-20">
       <p class="text-red-400">{{ error.message }}</p>
       <button 
         @click="refresh" 
@@ -192,12 +192,12 @@ const attendanceStats = computed(() => {
         <h2 class="mb-4 text-xl font-bold text-blue-400">Attendance Statistics</h2>
         
         <div class="grid grid-cols-2 gap-4">
-          <div class="p-4 bg-gray-750 rounded-lg">
+          <div class="p-4 rounded-lg bg-gray-750">
             <p class="text-sm font-medium text-gray-400">This Month</p>
             <p class="text-2xl font-bold text-white">{{ attendanceStats?.thisMonth || 0 }}</p>
           </div>
           
-          <div class="p-4 bg-gray-750 rounded-lg">
+          <div class="p-4 rounded-lg bg-gray-750">
             <p class="text-sm font-medium text-gray-400">Total</p>
             <p class="text-2xl font-bold text-white">{{ attendanceStats?.total || 0 }}</p>
           </div>
@@ -213,7 +213,7 @@ const attendanceStats = computed(() => {
       <div class="p-6 bg-gray-800 rounded-lg shadow-xl lg:col-span-3">
         <h2 class="mb-4 text-xl font-bold text-blue-400">Attendance History</h2>
         
-        <div v-if="member.userAttendances.length === 0" class="py-10 text-center text-gray-500">
+        <div v-if="member.memberAttendances?.length === 0" class="py-10 text-center text-gray-500">
           No attendance records found for this member
         </div>
         
@@ -228,7 +228,7 @@ const attendanceStats = computed(() => {
             </thead>
             <tbody>
               <tr 
-                v-for="(attendance, index) in [...member.userAttendances].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())" 
+                v-for="(attendance, index) in [...member.memberAttendances].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())" 
                 :key="attendance.id"
                 class="transition-colors border-b border-gray-700 hover:bg-gray-750"
               >

@@ -1,4 +1,4 @@
-import { prisma } from "~/server/utils/db";
+import { db } from "~/server/utils/db";
 
 export default eventHandler(async (event) => {
   const id = Number(event.context.params?.id);
@@ -11,14 +11,8 @@ export default eventHandler(async (event) => {
   }
   
   try {
-    const member = await prisma.user.findUnique({
-      where: { 
-        id 
-      },
-      include: {
-        userAttendances: true
-      }
-    });
+    const member = await db.findUserWithAttendances(id);
+    const memberAttendances = await db.getUserAttendance(id);
     
     if (!member) {
       throw createError({
@@ -27,7 +21,10 @@ export default eventHandler(async (event) => {
       });
     }
     
-    return member;
+    return {
+      ...member,
+      memberAttendances
+    };
     
   } catch (error) {
     console.error('Error fetching member:', error);

@@ -43,7 +43,7 @@ export function useNewFingerprintIdentify() {
         id: newIdentifyEvent.id,
         name: newIdentifyEvent.name,
         identifyTimestamp: newIdentifyEvent.identifyTimestamp,
-        attendanceCount: newIdentifyEvent.attendanceCount,
+        attendanceCount: newIdentifyEvent.attendanceCount + 1,
       }
     }
   }, { immediate: true })

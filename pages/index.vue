@@ -31,7 +31,11 @@ watch(newRegister, (newUser, prevUser) => {
   }
 }, { immediate: true })
 
-watch([newUserIdentify, newUserValid], async ([newUserIdentify, newUserValid]) => {
+watch([newUserIdentify, newUserValid, currentState], async ([newUserIdentify, newUserValid, newCurrentState]) => {
+  if (newCurrentState === "NEW_USER") {
+    return
+  }
+
   if (newUserIdentify && newUserValid) {
     currentState.value = "USER_IDENTIFIED"
 

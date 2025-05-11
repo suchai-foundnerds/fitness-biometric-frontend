@@ -1,6 +1,6 @@
 import { readFile } from 'fs/promises'
 import path from 'path'
-import { prisma } from '~/server/utils/db'
+import { db } from '~/server/utils/db'
 
 type ValidIdentifyResult = {
   status: 'valid',
@@ -15,7 +15,7 @@ type InvalidIdentifyResult = {
   identifyTimestamp: number,
 }
 
-type IdentifyResult = ValidIdentifyResult | InvalidIdentifyResult 
+type IdentifyResult = ValidIdentifyResult | InvalidIdentifyResult
 
 export default eventHandler(async (e): Promise<IdentifyResult> => {
   const fingerprint = await readFile(path.join(process.env.BASE_FINGERPRINT_DB_PATH!, "fingerprint-identify.txt"), 'utf-8')
@@ -26,21 +26,7 @@ export default eventHandler(async (e): Promise<IdentifyResult> => {
     identifyTimestamp: parseInt(timestamp),
   }
 
-  const user = await prisma.user.findFirst({
-    select: {
-      id: true,
-      name: true,
-      _count: {
-        select: {
-          userAttendances: true,
-        }
-      }
-    },
-    where: {
-      id: parseInt(id),
-      active: true,
-    },
-  })
+  const user = await db.findUserWithAttendances(parseInt(id))
 
   if (!user) return {
     status: 'invalid',
@@ -52,6 +38,6 @@ export default eventHandler(async (e): Promise<IdentifyResult> => {
     id: user.id,
     name: user.name,
     identifyTimestamp: parseInt(timestamp),
-    attendanceCount: user._count.userAttendances,
+    attendanceCount: Number(user.attendanceCount),
   }
 })
