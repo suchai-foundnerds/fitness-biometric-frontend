@@ -9,5 +9,10 @@ export default defineNuxtConfig({
   
   vite: {
     plugins: [tailwindcss()]
+  },
+
+  runtimeConfig: {
+    baseFingerprintDBPath: "./db",
+    databaseURL: "postgres://foundnerds-general:f0undnerdsf0undnerdsf0undnerds@119.59.103.72:5433/fingerprint"
   }
 })

@@ -1,6 +1,7 @@
 import postgres from 'postgres';
 
-export const sql = postgres("postgres://foundnerds-general:f0undnerdsf0undnerdsf0undnerds@119.59.103.72:5433/fingerprint");
+const config = useRuntimeConfig()
+export const sql = postgres(config.databaseURL);
 
 // Helper functions
 export const db = {

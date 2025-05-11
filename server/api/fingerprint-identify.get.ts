@@ -18,7 +18,8 @@ type InvalidIdentifyResult = {
 type IdentifyResult = ValidIdentifyResult | InvalidIdentifyResult
 
 export default eventHandler(async (e): Promise<IdentifyResult> => {
-  const fingerprint = await readFile(path.join(process.env.BASE_FINGERPRINT_DB_PATH!, "fingerprint-identify.txt"), 'utf-8')
+  const config = useRuntimeConfig()
+  const fingerprint = await readFile(path.join(config.baseFingerprintDBPath, "fingerprint-identify.txt"), 'utf-8')
   const [id, timestamp] = fingerprint.split(':')
 
   if (!id || !timestamp) return {

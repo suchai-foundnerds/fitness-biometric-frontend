@@ -2,7 +2,8 @@ import { readFile } from 'fs/promises'
 import path from 'path'
 
 export default eventHandler(async (e) => {
-  const fingerprint = await readFile(path.join(process.env.BASE_FINGERPRINT_DB_PATH!, "fingerprint-db.txt"), 'utf-8')
+  const config = useRuntimeConfig()
+  const fingerprint = await readFile(path.join(config.baseFingerprintDBPath, "fingerprint-db.txt"), 'utf-8')
   const usersInfos = fingerprint.split('\n')
   
   const users = usersInfos.map(user => {
