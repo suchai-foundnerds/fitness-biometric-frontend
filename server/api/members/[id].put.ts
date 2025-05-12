@@ -52,7 +52,9 @@ export default eventHandler(async (event) => {
       id, 
       body.active,
       body.membershipStartAt ? new Date(body.membershipStartAt) : undefined,
-      body.membershipEndAt ? new Date(body.membershipEndAt) : undefined
+      body.membershipEndAt ? new Date(body.membershipEndAt) : undefined,
+      body.phoneNumber,
+      body.remark
     );
     
     return updatedMember[0];

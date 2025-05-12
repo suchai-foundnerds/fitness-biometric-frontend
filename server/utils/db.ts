@@ -50,10 +50,10 @@ export const db = {
     `;
   },
 
-  async updateUserActiveStatus(id: number, active: boolean, startDate?: Date, endDate?: Date) {
+  async updateUserActiveStatus(id: number, active: boolean, startDate?: Date, endDate?: Date, phoneNumber?: string, remark?: string) {
     return await sql`
       UPDATE "User"
-      SET active = ${active}, "updatedAt" = NOW(), "membershipStartAt" = ${startDate || null}, "membershipEndAt" = ${endDate || null}
+      SET active = ${active}, "updatedAt" = NOW(), "membershipStartAt" = ${startDate || null}, "membershipEndAt" = ${endDate || null}, "phoneNumber" = ${phoneNumber || null}, "remark" = ${remark || null}
       WHERE id = ${id}
       RETURNING *
     `;

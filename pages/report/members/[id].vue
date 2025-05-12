@@ -65,7 +65,9 @@ const saveMemberChanges = async () => {
       body: {
         active: editedMember.value.active,
         membershipStartAt: editedMember.value.membershipStartAt,
-        membershipEndAt: editedMember.value.membershipEndAt
+        membershipEndAt: editedMember.value.membershipEndAt,
+        phoneNumber: editedMember.value.phoneNumber,
+        remark: editedMember.value.remark
       }
     });
     
@@ -272,12 +274,24 @@ const handleToggleStatus = async () => {
 
           <div class="flex">
             <span class="w-32 text-sm font-medium text-gray-400">Phone Number</span>
-            <span class="text-gray-300 truncate">{{ member.phoneNumber }}</span>
+            <input
+              v-if="editMode"
+              type="text"
+              v-model="editedMember!.phoneNumber"
+              class="px-3 py-1 text-white bg-gray-700 border border-gray-600 rounded focus:ring-blue-500 focus:border-blue-500"
+            />
+            <span v-else class="text-gray-300 truncate">{{ member.phoneNumber }}</span>
           </div>
 
           <div class="flex">
             <span class="w-32 text-sm font-medium text-gray-400">Remark</span>
-            <span class="text-gray-300 truncate">{{ member.remark }}</span>
+            <textarea
+              v-if="editMode"
+              v-model="editedMember!.remark"
+              class="px-3 py-1 text-white bg-gray-700 border border-gray-600 rounded focus:ring-blue-500 focus:border-blue-500"
+              rows="3"
+            ></textarea>
+            <span v-else class="text-gray-300 truncate">{{ member.remark }}</span>
           </div>
           
           <div class="flex">
