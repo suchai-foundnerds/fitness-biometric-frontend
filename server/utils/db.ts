@@ -6,10 +6,10 @@ export const sql = postgres(config.databaseURL);
 // Helper functions
 export const db = {
   // User operations
-  async createUser(data: { id: number; name: string; fingerprint: string }) {
+  async createUser(data: { id: number; name: string; fingerprint: string; phoneNumber: string; membershipStartAt?: Date; membershipEndAt?: Date; remark?: string }) {
     return await sql`
-      INSERT INTO "User" (id, name, fingerprint, "createdAt", "updatedAt", active)
-      VALUES (${data.id}, ${data.name}, ${data.fingerprint}, NOW(), NOW(), true)
+      INSERT INTO "User" (id, name, fingerprint, "createdAt", "updatedAt", active, "phoneNumber", "membershipStartAt", "membershipEndAt", "remark")
+      VALUES (${data.id}, ${data.name}, ${data.fingerprint}, NOW(), NOW(), true, ${data.phoneNumber}, ${data.membershipStartAt || null}, ${data.membershipEndAt || null}, ${data.remark || null})
       RETURNING *
     `;
   },
@@ -50,10 +50,10 @@ export const db = {
     `;
   },
 
-  async updateUserActiveStatus(id: number, active: boolean) {
+  async updateUserActiveStatus(id: number, active: boolean, startDate?: Date, endDate?: Date) {
     return await sql`
       UPDATE "User"
-      SET active = ${active}, "updatedAt" = NOW()
+      SET active = ${active}, "updatedAt" = NOW(), "membershipStartAt" = ${startDate || null}, "membershipEndAt" = ${endDate || null}
       WHERE id = ${id}
       RETURNING *
     `;

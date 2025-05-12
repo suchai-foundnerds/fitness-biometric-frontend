@@ -8,6 +8,10 @@ const newRegisterUser = ref({
   id: 0,
   name: '',
   fingerprint: '',
+  membershipStartAt: '',
+  membershipEndAt: '',
+  remark: '',
+  phoneNumber: '',
 })
 
 const isRegistering = ref(false)
@@ -25,6 +29,10 @@ watch(newRegister, (newUser, prevUser) => {
       id: newUser.id,
       name: '',
       fingerprint: newUser.fingerprint,
+      membershipStartAt: '',
+      membershipEndAt: '',
+      remark: '',
+      phoneNumber: '',
     }
   } else {
     currentState.value = "IDLE"
@@ -110,6 +118,15 @@ async function registerUser() {
         <p class="mb-4 text-sm text-gray-400">
           User ID: {{ newUserIdentify?.id }}
         </p>
+        <p class="mb-4 text-sm text-gray-400">
+          Membership Start: {{ newUserIdentify?.membershipStartAt ? new Date(newUserIdentify?.membershipStartAt).toLocaleDateString() : 'N/A' }}
+        </p>
+        <p class="mb-4 text-sm text-gray-400">
+          Membership End: {{ newUserIdentify?.membershipEndAt ? new Date(newUserIdentify?.membershipEndAt).toLocaleDateString() : 'N/A' }}
+        </p>
+        <p class="mb-4 text-sm text-gray-400">
+          Remark: {{ newUserIdentify?.remark }}
+        </p>
         <div class="w-full mt-6">
           <div class="flex items-center justify-between p-4 bg-gray-700 rounded-lg shadow">
             <span class="text-lg font-medium text-gray-300">Attendance Count</span>
@@ -151,6 +168,30 @@ async function registerUser() {
           <div>
             <label for="userName" class="block mb-2 text-sm font-medium text-gray-400">Full Name</label>
             <input type="text" id="userName" v-model="newRegisterUser.name" placeholder="Enter your full name"
+              class="w-full p-3 text-white placeholder-gray-500 bg-gray-700 border border-gray-600 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
+          </div>
+
+          <div>
+            <label for="phoneNumber" class="block mb-2 text-sm font-medium text-gray-400">Phone Number</label>
+            <input type="text" id="phoneNumber" v-model="newRegisterUser.phoneNumber" placeholder="Enter your phone number"
+              class="w-full p-3 text-white placeholder-gray-500 bg-gray-700 border border-gray-600 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
+          </div>
+          
+          <div>
+            <label for="membershipStartAt" class="block mb-2 text-sm font-medium text-gray-400">Membership Start</label>
+            <input type="datetime-local" id="membershipStartAt" v-model="newRegisterUser.membershipStartAt" placeholder="Enter your membership start date"
+              class="w-full p-3 text-white placeholder-gray-500 bg-gray-700 border border-gray-600 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
+          </div>
+
+          <div>
+            <label for="membershipEndAt" class="block mb-2 text-sm font-medium text-gray-400">Membership End</label>
+            <input type="datetime-local" id="membershipEndAt" v-model="newRegisterUser.membershipEndAt" placeholder="Enter your membership end date"
+              class="w-full p-3 text-white placeholder-gray-500 bg-gray-700 border border-gray-600 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
+          </div>
+
+          <div>
+            <label for="remark" class="block mb-2 text-sm font-medium text-gray-400">Remark</label>
+            <input type="text" id="remark" v-model="newRegisterUser.remark" placeholder="Enter your remark"
               class="w-full p-3 text-white placeholder-gray-500 bg-gray-700 border border-gray-600 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
           </div>
 

@@ -4,6 +4,9 @@ interface User {
   name: string
   fingerprint: string
   active: boolean
+  membershipStartAt: string | null
+  membershipEndAt: string | null
+  remark: string | null
   createdAt: string
   updatedAt: string
   userAttendances?: {
@@ -113,6 +116,9 @@ const filteredMembers = computed(() => {
               <th class="pb-3 pr-3 font-medium">ID</th>
               <th class="px-3 pb-3 font-medium">Name</th>
               <th class="px-3 pb-3 font-medium">Status</th>
+              <th class="px-3 pb-3 font-medium">Membership Start</th>
+              <th class="px-3 pb-3 font-medium">Membership End</th>
+              <th class="px-3 pb-3 font-medium">Remark</th>
               <th class="px-3 pb-3 font-medium">Created</th>
               <th class="px-3 pb-3 font-medium">Last Updated</th>
               <th class="px-3 pb-3 font-medium">Actions</th>
@@ -135,6 +141,15 @@ const filteredMembers = computed(() => {
                 >
                   {{ member.active ? 'Active' : 'Inactive' }}
                 </span>
+              </td>
+              <td class="px-3 py-4 text-gray-400">
+                {{ member.membershipStartAt ? new Date(member.membershipStartAt).toLocaleDateString() : 'N/A' }}
+              </td>
+              <td class="px-3 py-4 text-gray-400">
+                {{ member.membershipEndAt ? new Date(member.membershipEndAt).toLocaleDateString() : 'N/A' }}
+              </td>
+              <td class="px-3 py-4 text-gray-400">
+                {{ member.remark }}
               </td>
               <td class="px-3 py-4 text-gray-400">
                 {{ new Date(member.createdAt).toLocaleDateString() }}

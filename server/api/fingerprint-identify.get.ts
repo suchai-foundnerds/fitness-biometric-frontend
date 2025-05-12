@@ -28,6 +28,18 @@ export default eventHandler(async (e): Promise<IdentifyResult> => {
   }
 
   const user = await db.findUserWithAttendances(parseInt(id))
+  
+  if (user.membershipEndAt && new Date(user.membershipEndAt) < new Date()) {
+    return {
+      status: 'invalid',
+      identifyTimestamp: parseInt(timestamp),
+    }
+  } else if (user.membershipStartAt && new Date(user.membershipStartAt) > new Date()) {
+    return {
+      status: 'invalid',
+      identifyTimestamp: parseInt(timestamp),
+    }
+  }
 
   if (!user) return {
     status: 'invalid',
@@ -38,6 +50,9 @@ export default eventHandler(async (e): Promise<IdentifyResult> => {
     status: 'valid',
     id: user.id,
     name: user.name,
+    membershipStartAt: user.membershipStartAt,
+    membershipEndAt: user.membershipEndAt,
+    remark: user.remark,
     identifyTimestamp: parseInt(timestamp),
     attendanceCount: Number(user.attendanceCount),
   }

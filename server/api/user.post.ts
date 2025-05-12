@@ -5,17 +5,9 @@ export default defineEventHandler(async (event) => {
   try {
     const body = await readBody(event);
 
-    // Validate input
-    if (!body.name || !body.fingerprint || !body.id) {
-      throw createError({
-        statusCode: 400,
-        statusMessage: 'Missing required fields: name, fingerprint, or id',
-      });
-    }
+    const { name, fingerprint, id, phoneNumber, membershipStartAt, membershipEndAt, remark } = body;
 
-    const { name, fingerprint, id } = body;
-
-    const newUser = await db.createUser({ id, name, fingerprint });
+    const newUser = await db.createUser({ id, name, fingerprint, phoneNumber, membershipStartAt, membershipEndAt, remark });
 
     return {
       message: 'User creation endpoint called successfully',

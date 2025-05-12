@@ -11,6 +11,9 @@ export function useNewFingerprintIdentify() {
     name: string,
     identifyTimestamp: number,
     attendanceCount: number,
+    membershipStartAt: string | null,
+    membershipEndAt: string | null,
+    remark: string | null,
   } | null>(null)
 
   watch(identifyEvent, async (newIdentifyEvent, prevIdentifyEvent) => {
@@ -44,6 +47,9 @@ export function useNewFingerprintIdentify() {
         name: newIdentifyEvent.name,
         identifyTimestamp: newIdentifyEvent.identifyTimestamp,
         attendanceCount: newIdentifyEvent.attendanceCount + 1,
+        membershipStartAt: newIdentifyEvent.membershipStartAt,
+        membershipEndAt: newIdentifyEvent.membershipEndAt,
+        remark: newIdentifyEvent.remark,
       }
     }
   }, { immediate: true })

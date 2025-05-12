@@ -3,14 +3,20 @@ const route = useRoute();
 const memberId = computed(() => Number(route.params.id));
 const isUpdating = ref(false);
 const updateError = ref('');
+const editMode = ref(false);
+const editedMember = ref<User | null>(null);
 
 interface User {
   id: number;
   name: string;
   fingerprint: string;
   active: boolean;
+  phoneNumber: string;
+  remark: string;
   createdAt: string;
   updatedAt: string;
+  membershipStartAt: string | null;
+  membershipEndAt: string | null;
   memberAttendances: {
     id: number;
     createdAt: string;
@@ -21,7 +27,8 @@ interface User {
 const { data: member, pending, error, refresh } = await useFetch<User>(`/api/members/${memberId.value}`);
 
 // Format date for better display
-const formatDate = (dateString: string) => {
+const formatDate = (dateString: string | null) => {
+  if (!dateString) return 'Not set';
   const date = new Date(dateString);
   return date.toLocaleString('en-US', {
     weekday: 'long',
@@ -31,6 +38,47 @@ const formatDate = (dateString: string) => {
     hour: '2-digit',
     minute: '2-digit'
   });
+};
+
+// Toggle edit mode
+const toggleEditMode = () => {
+  if (editMode.value) {
+    // Cancel edit
+    editedMember.value = null;
+  } else {
+    // Start edit
+    editedMember.value = { ...member.value! };
+  }
+  editMode.value = !editMode.value;
+};
+
+// Save member changes
+const saveMemberChanges = async () => {
+  if (!editedMember.value) return;
+  
+  try {
+    isUpdating.value = true;
+    updateError.value = '';
+    
+    await $fetch(`/api/members/${memberId.value}`, {
+      method: 'PUT',
+      body: {
+        active: editedMember.value.active,
+        membershipStartAt: editedMember.value.membershipStartAt,
+        membershipEndAt: editedMember.value.membershipEndAt
+      }
+    });
+    
+    // Refresh the member data after update
+    refresh();
+    editMode.value = false;
+    editedMember.value = null;
+  } catch (error) {
+    console.error('Error updating member:', error);
+    updateError.value = 'Failed to update member';
+  } finally {
+    isUpdating.value = false;
+  }
 };
 
 // Toggle member active status
@@ -89,6 +137,10 @@ const attendanceStats = computed(() => {
     lastAttendance
   };
 });
+
+const handleToggleStatus = async () => {
+  await toggleMemberStatus();
+};
 </script>
 
 <template>
@@ -144,17 +196,33 @@ const attendanceStats = computed(() => {
               <p class="text-gray-400">ID: {{ member.id }}</p>
             </div>
           </div>
-          <button
-            @click="toggleMemberStatus"
-            :class="[
-              'px-4 py-2 text-sm font-medium rounded',
-              member.active 
-                ? 'text-white bg-red-600 hover:bg-red-700' 
-                : 'text-white bg-green-600 hover:bg-green-700'
-            ]"
-          >
-            {{ member.active ? 'Deactivate' : 'Activate' }}
-          </button>
+          <div class="flex space-x-2">
+            <button
+              @click="toggleEditMode"
+              class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded hover:bg-blue-700"
+            >
+              {{ editMode ? 'Cancel' : 'Edit' }}
+            </button>
+            <button
+              v-if="editMode"
+              @click="saveMemberChanges"
+              class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded hover:bg-green-700"
+            >
+              Save
+            </button>
+            <button
+              v-if="!editMode"
+              @click="handleToggleStatus"
+              :class="[
+                'px-4 py-2 text-sm font-medium rounded',
+                member.active 
+                  ? 'text-white bg-red-600 hover:bg-red-700' 
+                  : 'text-white bg-green-600 hover:bg-green-700'
+              ]"
+            >
+              {{ member.active ? 'Deactivate' : 'Activate' }}
+            </button>
+          </div>
         </div>
         
         <div class="mt-6 space-y-4">
@@ -171,6 +239,28 @@ const attendanceStats = computed(() => {
           </div>
           
           <div class="flex">
+            <span class="w-32 text-sm font-medium text-gray-400">Start Date</span>
+            <input
+              v-if="editMode"
+              type="datetime-local"
+              v-model="editedMember!.membershipStartAt"
+              class="px-3 py-1 text-white bg-gray-700 border border-gray-600 rounded focus:ring-blue-500 focus:border-blue-500"
+            />
+            <span v-else class="text-white">{{ formatDate(member.membershipStartAt) }}</span>
+          </div>
+          
+          <div class="flex">
+            <span class="w-32 text-sm font-medium text-gray-400">End Date</span>
+            <input
+              v-if="editMode"
+              type="datetime-local"
+              v-model="editedMember!.membershipEndAt"
+              class="px-3 py-1 text-white bg-gray-700 border border-gray-600 rounded focus:ring-blue-500 focus:border-blue-500"
+            />
+            <span v-else class="text-white">{{ formatDate(member.membershipEndAt) }}</span>
+          </div>
+          
+          <div class="flex">
             <span class="w-32 text-sm font-medium text-gray-400">Created</span>
             <span class="text-white">{{ formatDate(member.createdAt) }}</span>
           </div>
@@ -178,6 +268,16 @@ const attendanceStats = computed(() => {
           <div class="flex">
             <span class="w-32 text-sm font-medium text-gray-400">Last Updated</span>
             <span class="text-white">{{ formatDate(member.updatedAt) }}</span>
+          </div>
+
+          <div class="flex">
+            <span class="w-32 text-sm font-medium text-gray-400">Phone Number</span>
+            <span class="text-gray-300 truncate">{{ member.phoneNumber }}</span>
+          </div>
+
+          <div class="flex">
+            <span class="w-32 text-sm font-medium text-gray-400">Remark</span>
+            <span class="text-gray-300 truncate">{{ member.remark }}</span>
           </div>
           
           <div class="flex">
