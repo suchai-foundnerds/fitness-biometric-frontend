@@ -28,6 +28,11 @@ export default eventHandler(async (e): Promise<IdentifyResult> => {
   }
 
   const user = await db.findUserWithAttendances(parseInt(id))
+
+  if (!user) return {
+    status: 'invalid',
+    identifyTimestamp: parseInt(timestamp),
+  }
   
   if (user.membershipEndAt && new Date(user.membershipEndAt) < new Date()) {
     return {
