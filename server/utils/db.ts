@@ -6,7 +6,7 @@ export const sql = postgres(config.databaseURL);
 // Helper functions
 export const db = {
   // User operations
-  async createUser(data: { id: number; name: string; fingerprint: string; phoneNumber: string; membershipStartAt?: Date; membershipEndAt?: Date; remark?: string }) {
+  async createUser(data: { id: number; name: string; fingerprint: string; phoneNumber?: string; membershipStartAt?: Date; membershipEndAt?: Date; remark?: string }) {
     return await sql`
       INSERT INTO "User" (id, name, fingerprint, "createdAt", "updatedAt", active, "phoneNumber", "membershipStartAt", "membershipEndAt", "remark")
       VALUES (${data.id}, ${data.name}, ${data.fingerprint}, NOW(), NOW(), true, ${data.phoneNumber}, ${data.membershipStartAt || null}, ${data.membershipEndAt || null}, ${data.remark || null})
@@ -36,7 +36,7 @@ export const db = {
       SELECT u.*, 
         (SELECT COUNT(*) FROM "UserAttendance" WHERE "userId" = u.id) as "attendanceCount"
       FROM "User" u
-      WHERE u.id = ${id} AND u.active = true
+      WHERE u.id = ${id}
     `;
     return users[0];
   },
@@ -51,9 +51,19 @@ export const db = {
   },
 
   async updateUserActiveStatus(id: number, active: boolean, startDate?: Date, endDate?: Date, phoneNumber?: string, remark?: string) {
+    const updates = {
+      active,
+      updatedAt: new Date()
+    };
+    
+    if (startDate !== undefined) updates.membershipStartAt = startDate;
+    if (endDate !== undefined) updates.membershipEndAt = endDate;
+    if (phoneNumber !== undefined) updates.phoneNumber = phoneNumber;
+    if (remark !== undefined) updates.remark = remark;
+
     return await sql`
-      UPDATE "User"
-      SET active = ${active}, "updatedAt" = NOW(), "membershipStartAt" = ${startDate || null}, "membershipEndAt" = ${endDate || null}, "phoneNumber" = ${phoneNumber || null}, "remark" = ${remark || null}
+      UPDATE "User" 
+      SET ${sql(updates)}
       WHERE id = ${id}
       RETURNING *
     `;

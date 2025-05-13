@@ -29,7 +29,7 @@ export default eventHandler(async (e): Promise<IdentifyResult> => {
 
   const user = await db.findUserWithAttendances(parseInt(id))
 
-  if (!user) return {
+  if (!user || user.active === false) return {
     status: 'invalid',
     identifyTimestamp: parseInt(timestamp),
   }

@@ -2,7 +2,7 @@
 type AppState = "IDLE" | "USER_IDENTIFIED" | "USER_INVALID" | "NEW_USER";
 
 const newRegister = useNewRegister()
-const { newUserIdentify, newUserValid } = useNewFingerprintIdentify()
+const { newUserIdentify, newUserValid, clearNewUserIdentify } = useNewFingerprintIdentify()
 
 const newRegisterUser = ref({
   id: 0,
@@ -10,54 +10,62 @@ const newRegisterUser = ref({
   fingerprint: '',
   membershipStartAt: '',
   membershipEndAt: '',
-  remark: '',
+  remark: '-',
   phoneNumber: '',
 })
 
 const isRegistering = ref(false)
 const showSuccessPopup = ref(false)
-const currentState = ref<AppState>("IDLE")
 const timeoutRef = ref<NodeJS.Timeout | null>(null)
+
+const currentState = computed<AppState>(() => {
+  if (newRegister.value && newRegister.value.id > 0) {
+    return "NEW_USER"
+  }
+  
+  if (newUserIdentify.value && newUserValid.value) {
+    return "USER_IDENTIFIED"
+  }
+  
+  if (newUserValid.value === false) {
+    return "USER_INVALID"
+  }
+  
+  return "IDLE"
+})
 
 watch(newRegister, (newUser, prevUser) => {
   if (newUser?.id === prevUser?.id) return
 
   if (newUser) {
-    currentState.value = "NEW_USER"
-
     newRegisterUser.value = {
       id: newUser.id,
       name: '',
       fingerprint: newUser.fingerprint,
       membershipStartAt: '',
       membershipEndAt: '',
-      remark: '',
+      remark: '-',
       phoneNumber: '',
     }
-  } else {
-    currentState.value = "IDLE"
   }
 }, { immediate: true })
 
-watch([newUserIdentify, newUserValid, currentState], async ([newUserIdentify, newUserValid, newCurrentState]) => {
-  if (newCurrentState === "NEW_USER") {
+watch([newUserIdentify, newUserValid], async ([newUserIdentify, newUserValid]) => {
+  if (!newUserValid) {
     return
-  }
-
-  if (newUserIdentify && newUserValid) {
-    currentState.value = "USER_IDENTIFIED"
-
-  } else if (newUserValid === false) {
-    currentState.value = "USER_INVALID"
   }
   
   if (timeoutRef.value) {
     clearTimeout(timeoutRef.value)
   }
+
+  console.log('asdfasdfsd')
   
   timeoutRef.value = setTimeout(() => {
-      currentState.value = "IDLE"
-    }, 4000)
+    if (currentState.value !== "NEW_USER") {
+      clearNewUserIdentify()
+    }
+  }, 10000)
 }, { immediate: true })
 
 async function registerUser() {
@@ -72,6 +80,16 @@ async function registerUser() {
 
     showSuccessPopup.value = true
     currentState.value = "IDLE"
+
+    newRegisterUser.value = {
+      id: 0,
+      name: '',
+      fingerprint: '',
+      membershipStartAt: '',
+      membershipEndAt: '',
+      remark: '-',
+      phoneNumber: '',
+    }
 
     setTimeout(() => {
       showSuccessPopup.value = false
@@ -167,31 +185,31 @@ async function registerUser() {
 
           <div>
             <label for="userName" class="block mb-2 text-sm font-medium text-gray-400">Full Name</label>
-            <input type="text" id="userName" v-model="newRegisterUser.name" placeholder="Enter your full name"
+            <input type="text" id="userName" v-model="newRegisterUser.name" placeholder="Enter your full name" required
               class="w-full p-3 text-white placeholder-gray-500 bg-gray-700 border border-gray-600 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
           </div>
 
           <div>
             <label for="phoneNumber" class="block mb-2 text-sm font-medium text-gray-400">Phone Number</label>
-            <input type="text" id="phoneNumber" v-model="newRegisterUser.phoneNumber" placeholder="Enter your phone number"
+            <input type="text" id="phoneNumber" v-model="newRegisterUser.phoneNumber" placeholder="Enter your phone number" required
               class="w-full p-3 text-white placeholder-gray-500 bg-gray-700 border border-gray-600 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
           </div>
           
           <div>
             <label for="membershipStartAt" class="block mb-2 text-sm font-medium text-gray-400">Membership Start</label>
-            <input type="datetime-local" id="membershipStartAt" v-model="newRegisterUser.membershipStartAt" placeholder="Enter your membership start date"
+            <input type="date" id="membershipStartAt" v-model="newRegisterUser.membershipStartAt" placeholder="Enter your membership start date" required
               class="w-full p-3 text-white placeholder-gray-500 bg-gray-700 border border-gray-600 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
           </div>
 
           <div>
             <label for="membershipEndAt" class="block mb-2 text-sm font-medium text-gray-400">Membership End</label>
-            <input type="datetime-local" id="membershipEndAt" v-model="newRegisterUser.membershipEndAt" placeholder="Enter your membership end date"
+            <input type="date" id="membershipEndAt" v-model="newRegisterUser.membershipEndAt" placeholder="Enter your membership end date" required
               class="w-full p-3 text-white placeholder-gray-500 bg-gray-700 border border-gray-600 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
           </div>
 
           <div>
             <label for="remark" class="block mb-2 text-sm font-medium text-gray-400">Remark</label>
-            <input type="text" id="remark" v-model="newRegisterUser.remark" placeholder="Enter your remark"
+            <input type="text" id="remark" v-model="newRegisterUser.remark" placeholder="If don't have any remark, just put -" required
               class="w-full p-3 text-white placeholder-gray-500 bg-gray-700 border border-gray-600 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
           </div>
 
@@ -209,7 +227,7 @@ async function registerUser() {
 
           <button type="submit"
             class="w-full px-4 py-3 font-semibold text-gray-900 bg-yellow-400 rounded-lg hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-yellow-600 focus:ring-opacity-50 disabled:opacity-70 disabled:cursor-not-allowed"
-            :disabled="isRegistering || !newRegisterUser.name">
+            :disabled="isRegistering || !newRegisterUser.name || !newRegisterUser.phoneNumber || !newRegisterUser.membershipStartAt || !newRegisterUser.membershipEndAt || !newRegisterUser.remark">
             <div v-if="isRegistering" class="flex items-center justify-center">
               <svg class="w-5 h-5 mr-2 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>

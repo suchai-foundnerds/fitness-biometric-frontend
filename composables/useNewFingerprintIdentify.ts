@@ -69,5 +69,10 @@ export function useNewFingerprintIdentify() {
     }
   }
 
-  return { newUserIdentify, newUserValid }
+  function clearNewUserIdentify() { 
+    newUserIdentify.value = null
+    newUserValid.value = undefined
+  }
+
+  return { newUserIdentify, newUserValid, clearNewUserIdentify }
 }
